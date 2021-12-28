@@ -2201,8 +2201,9 @@ dir-glob@^3.0.1:
   dependencies:
     path-type "^4.0.0"
 
-"dn-api-core@file:../../dn-lib/dn-api-core":
+"dn-api-core@git+https://github.com/nghiandd84/dn-api-core.git":
   version "0.0.1"
+  resolved "git+https://github.com/nghiandd84/dn-api-core.git#cbd5640f715226be909508dc7797c6762fec3227"
   dependencies:
     "@nestjs/cli" "^8.0.0"
     "@nestjs/common" "^8.0.0"

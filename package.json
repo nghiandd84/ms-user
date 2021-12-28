@@ -32,7 +32,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "bcrypt": "^5.0.1",
     "dn-core": "git+https://github.com/nghiandd84/dn-core.git",
-    "dn-api-core": "file:../../dn-lib/dn-api-core",
+    "dn-api-core": "git+https://github.com/nghiandd84/dn-api-core.git",
     "cache-manager": "^3.6.0",
     "jsonwebtoken": "^8.5.1",
     "passport": "^0.5.2",

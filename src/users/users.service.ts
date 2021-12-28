@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 
 import { UserEntity } from './users.entity';
 import { User } from './users.dto';
-import { Login } from '../auth/auth.dto';
+import { Login } from 'dn-api-core';
 import { comparePasswords, toUserDto } from './user.helper';
 
 @Injectable()
