@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { Login, LoginStatus, RegisterUser, AuthService } from 'dn-api-core';
+import { Login, LoginStatus, RegisterUser, AuthService, Public } from 'dn-api-core';
 import { UsersService } from '../users/users.service';
 
 @Controller('auth')
@@ -9,11 +9,13 @@ export class AuthController {
     private readonly userService: UsersService,
   ) {}
 
+  @Public()
   @Post('login')
   public login(@Body() loginUserDto: Login): Promise<LoginStatus> {
     return this.authService.login(loginUserDto, this.userService);
   }
 
+  @Public()
   @Post('register')
   public async register(
     @Body() registerUser: RegisterUser,

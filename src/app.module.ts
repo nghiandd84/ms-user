@@ -5,9 +5,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserEntity } from './users/users.entity';
 import { UsersModule } from './users/users.module';
-// import { AuthModule } from './auth/auth.module';
-// import { AuthController } from './auth-controller/auth.controller';
 import { AuthControllerModule } from './auth-controller/auth.module';
+import { PermissionModule } from './permission/permission.module';
+import { Permission } from './permission/permission.entity';
+import { APP_GUARD } from '@nestjs/core';
+import { AtGuard } from 'dn-api-core';
 
 @Module({
   imports: [
@@ -23,16 +25,23 @@ import { AuthControllerModule } from './auth-controller/auth.module';
         username: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
-        entities: [UserEntity],
+        entities: [UserEntity, Permission],
         synchronize: true, // REMOVE on PROD
         logging: true,
       }),
     }),
     UsersModule,
-    AuthControllerModule
+    AuthControllerModule,
+    PermissionModule
     // AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AtGuard,
+    // },
+    AppService
+  ],
 })
 export class AppModule {}
