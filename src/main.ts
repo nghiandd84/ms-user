@@ -9,21 +9,18 @@ declare const module: any;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // app.useGlobalInterceptors(new TransformInterceptor());
+  app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalPipes(new ValidationPipe());
+  
   const reflector = new Reflector();
-  const atGuard  : any = new AtGuard(reflector);
-  // console.log(atGuard);
+  const atGuard: any = new AtGuard(reflector);
   app.useGlobalGuards(atGuard);
+
   const config = new DocumentBuilder()
     .setTitle('User app')
     .setDescription('User app description')
     .setVersion('1.0')
     .addTag('users')
-    // .addBearerAuth(
-    //   { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-    //   'access-token',
-    // )
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);

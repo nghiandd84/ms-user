@@ -1,26 +1,28 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 
 import { UserEntity } from './users.entity';
 import { User } from './users.dto';
 import { Login } from 'dn-api-core';
-import { comparePasswords, toUserDto } from './user.helper';
+import { comparePasswords } from './user.helper';
 
 @Injectable()
-export class UsersService {
-  constructor(
-    @InjectRepository(UserEntity)
-    private repository: Repository<UserEntity>,
-  ) {}
-
-  showAll() {
-    return this.repository.find();
+@Injectable()
+export class UsersService extends TypeOrmCrudService<UserEntity> {
+  constructor(@InjectRepository(UserEntity) repo) {
+    super(repo);
   }
+  private readonly logger = new Logger(UsersService.name);
 
+
+  
+  // Create User
   create(data: User) {
-    const userEntity = this.repository.create(data);
-    return this.repository
+    this.logger.debug('Create new user')
+    const userEntity = this.repo.create(data);
+    return this.repo
       .save(userEntity)
       .then((entity) => {
         return Promise.resolve({ id: entity.id });
@@ -39,15 +41,16 @@ export class UsersService {
   }
 
   findByEmail(email: string): Promise<User> {
-    return this.repository.findOne({
+    return this.repo.findOne({
       where: {
         email,
       },
     });
   }
 
+  /*
   read(id: number) {
-    return this.repository.findOne({ where: { id: id } }).then((data) => {
+    return this.repo.findOne({ where: { id: id } }).then((data) => {
       if (data) {
         return Promise.resolve(data);
       }
@@ -58,9 +61,9 @@ export class UsersService {
   }
 
   update(id: number, data: Partial<User>) {
-    return this.repository.update({ id }, data).then((result) => {
+    return this.repo.update({ id }, data).then((result) => {
       if (result.affected === 1) {
-        return this.repository
+        return this.repo
           .findOne({ id })
           .then((userEntity) => Promise.resolve(toUserDto(userEntity)));
       }
@@ -71,7 +74,7 @@ export class UsersService {
   }
 
   destroy(id: number) {
-    return this.repository.delete({ id }).then((data) => {
+    return this.repo.delete({ id }).then((data) => {
       if (data.affected === 1) {
         return Promise.resolve(true);
       }
@@ -80,11 +83,14 @@ export class UsersService {
       );
     });
   }
+  */
 
-  async findByLogin({ email, password }: Login): Promise<User> {
-    const user = await this.repository.findOne({
+  async findByLogin(email: string, password: string): Promise<User> {
+    this.logger.debug('find by email')
+    const user = await this.repo.findOne({
       where: { email },
       select: ['id', 'email', 'password'],
+      relations: ['accesses']
     });
 
     if (!user) {

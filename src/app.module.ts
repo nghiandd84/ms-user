@@ -3,13 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserEntity } from './users/users.entity';
+import { AccessEntity, UserEntity } from './users/users.entity';
 import { UsersModule } from './users/users.module';
 import { AuthControllerModule } from './auth-controller/auth.module';
 import { PermissionModule } from './permission/permission.module';
 import { Permission } from './permission/permission.entity';
 import { APP_GUARD } from '@nestjs/core';
-import { AtGuard } from 'dn-api-core';
+import { AccessGuard, AtGuard } from 'dn-api-core';
 
 @Module({
   imports: [
@@ -25,23 +25,16 @@ import { AtGuard } from 'dn-api-core';
         username: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
-        entities: [UserEntity, Permission],
+        entities: [UserEntity, Permission, AccessEntity],
         synchronize: true, // REMOVE on PROD
         logging: true,
       }),
     }),
     UsersModule,
     AuthControllerModule,
-    PermissionModule
-    // AuthModule,
+    PermissionModule,
   ],
   controllers: [AppController],
-  providers: [
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AtGuard,
-    // },
-    AppService
-  ],
+  providers: [AppService],
 })
 export class AppModule {}

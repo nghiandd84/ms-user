@@ -7,35 +7,75 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BaseEntity,
+  Generated,
+  OneToMany,
+  ManyToOne,
 } from 'typeorm';
 
 import * as bcrypt from 'bcrypt';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('users')
 export class UserEntity extends BaseEntity {
+  @ApiProperty({ required: false, readOnly: true })
   @PrimaryGeneratedColumn()
   id: number;
 
+  @ApiProperty({ default: 'John' })
   @Column({ name: 'first_name' })
   firstName: string;
+
+  @ApiProperty({ default: 'Smith' })
   @Column({ name: 'last_name' })
   lastName: string;
 
+  @ApiProperty({ default: 'john.smit@yopmail.com' })
   @Column({ unique: true })
   email: string;
+
+  @ApiProperty({ required: false, readOnly: true })
   @CreateDateColumn({ name: 'create_time' })
   createdAt: Date;
 
+  @ApiProperty({ required: false, readOnly: true })
   @UpdateDateColumn({ name: 'update_time' })
   updatedAt: Date;
 
+  @ApiProperty({ default: 'Abc@123456' })
   @Column({ name: 'password', select: false })
   password: string;
+
+  @ApiProperty({ required: false, readOnly: true })
+  @Column({ name: 'active', default: false })
+  isActive: boolean;
 
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {
-    this.password = await bcrypt.hash(this.password, 10);
+    if(this.password) {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
   }
 
+  @OneToMany((_) => AccessEntity, (access) => access.user, { eager: true })
+  accesses: AccessEntity[];
+}
+
+@Entity('access')
+export class AccessEntity extends BaseEntity {
+  @PrimaryGeneratedColumn('increment')
+  id: number;
+
+  @ManyToOne(() => UserEntity, (user) => user.accesses)
+  user: UserEntity;
+
+  @Column({ name: 'role_id', type: 'int' })
+  roleId: number;
+
+  @Column({ name: 'location_id', type: 'varchar', nullable: true })
+  locationId: string;
+
+  @Column({ name: 'app_id', type: 'varchar', nullable: true })
+  appId: string;
+  
 }

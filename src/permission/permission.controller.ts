@@ -1,10 +1,10 @@
-import { Controller, UseGuards } from '@nestjs/common';
+import { Controller, SetMetadata, UseGuards } from '@nestjs/common';
 import { Crud, CrudAuth } from '@nestjsx/crud';
 import { PermissionService } from './permission.service';
 import { Permission } from './permission.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreatePermissionDto, UpdatePermissionDto } from './permission.dto';
-import { User } from 'dn-api-core';
+import { User, Access, AccessGuard } from 'dn-api-core';
 
 @ApiTags('permissions')
 @CrudAuth({
@@ -25,8 +25,8 @@ import { User } from 'dn-api-core';
   },
   routes: {
     getOneBase: {
-      // decorators: [UseGuards(JwtAuthGuard)],      
-    }
+      decorators: [UseGuards(AccessGuard('PERMISSION_GET_ONE', 'USER'))],
+    },
   },
   params: {
     id: {
@@ -42,7 +42,6 @@ import { User } from 'dn-api-core';
   },
 })
 @Controller('permissions')
-// @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class PermissionController {
   constructor(private readonly service: PermissionService) {}
