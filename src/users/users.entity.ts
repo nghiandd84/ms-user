@@ -10,10 +10,14 @@ import {
   Generated,
   OneToMany,
   ManyToOne,
+  OneToOne,
+  AfterLoad,
+  JoinColumn,
 } from 'typeorm';
 
 import * as bcrypt from 'bcrypt';
 import { ApiProperty } from '@nestjs/swagger';
+import { RoleEntity } from '../role/entities/role.entity';
 
 @Entity('users')
 export class UserEntity extends BaseEntity {
@@ -52,7 +56,7 @@ export class UserEntity extends BaseEntity {
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {
-    if(this.password) {
+    if (this.password) {
       this.password = await bcrypt.hash(this.password, 10);
     }
   }
@@ -66,16 +70,24 @@ export class AccessEntity extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.accesses)
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: UserEntity;
 
-  @Column({ name: 'role_id', type: 'int' })
-  roleId: number;
+  @ManyToOne((_) => RoleEntity, { eager: true })
+  @JoinColumn({ name: 'rule_id', referencedColumnName: 'id' })
+  role: RoleEntity;
+
+  roleKey: string;
 
   @Column({ name: 'location_id', type: 'varchar', nullable: true })
   locationId: string;
 
   @Column({ name: 'app_id', type: 'varchar', nullable: true })
   appId: string;
-  
+
+  @AfterLoad()
+  loadKey() {
+    this.roleKey = this.role?.key || null;
+  }
 }

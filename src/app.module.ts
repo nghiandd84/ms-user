@@ -8,8 +8,7 @@ import { UsersModule } from './users/users.module';
 import { AuthControllerModule } from './auth-controller/auth.module';
 import { PermissionModule } from './permission/permission.module';
 import { Permission } from './permission/permission.entity';
-import { APP_GUARD } from '@nestjs/core';
-import { AccessGuard, AtGuard } from 'dn-api-core';
+import { RoleEntity } from './role/entities/role.entity';
 
 @Module({
   imports: [
@@ -25,7 +24,7 @@ import { AccessGuard, AtGuard } from 'dn-api-core';
         username: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
-        entities: [UserEntity, Permission, AccessEntity],
+        entities: [UserEntity, Permission, AccessEntity, RoleEntity],
         synchronize: true, // REMOVE on PROD
         logging: true,
       }),

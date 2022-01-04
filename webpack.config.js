@@ -4,7 +4,6 @@ const nodeExternals = require('webpack-node-externals');
 const { RunScriptWebpackPlugin } = require('run-script-webpack-plugin');
 
 const pkg = require('./package.json');
-console.log(pkg.dependencies);
 
 module.exports = (env, args) => {
   const envData = env.env || 'local';
@@ -49,6 +48,5 @@ module.exports = (env, args) => {
     config.plugins.push(new RunScriptWebpackPlugin({ name: 'server.js' }));
   }
 
-  console.log(config)
   return config;
 };

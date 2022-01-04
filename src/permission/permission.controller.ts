@@ -1,10 +1,12 @@
-import { Controller, SetMetadata, UseGuards } from '@nestjs/common';
+import { Controller, UseGuards } from '@nestjs/common';
 import { Crud, CrudAuth } from '@nestjsx/crud';
-import { PermissionService } from './permission.service';
-import { Permission } from './permission.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { User, AccessRole } from 'dn-api-core';
+import { USER_ROLE } from 'dn-core';
+
+import { Permission } from './permission.entity';
+import { PermissionService } from './permission.service';
 import { CreatePermissionDto, UpdatePermissionDto } from './permission.dto';
-import { User, AccessGuard } from 'dn-api-core';
 
 @ApiTags('permissions')
 @CrudAuth({
@@ -25,18 +27,34 @@ import { User, AccessGuard } from 'dn-api-core';
   },
   routes: {
     getOneBase: {
-      decorators: [UseGuards(AccessGuard('PERMISSION_GET_ONE', 'USER'))],
+      decorators: [UseGuards(AccessRole(USER_ROLE.ADMIN))],
+    },
+    getManyBase: {
+      decorators: [UseGuards(AccessRole(USER_ROLE.ADMIN))],
+    },
+    createManyBase: {
+      decorators: [UseGuards(AccessRole(USER_ROLE.ADMIN))],
+    },
+    createOneBase: {
+      decorators: [UseGuards(AccessRole(USER_ROLE.ADMIN))],
+    },
+    deleteOneBase: {
+      decorators: [UseGuards(AccessRole(USER_ROLE.ADMIN))],
+    },
+    updateOneBase: {
+      decorators: [UseGuards(AccessRole(USER_ROLE.ADMIN))],
+    },
+    replaceOneBase: {
+      decorators: [UseGuards(AccessRole(USER_ROLE.ADMIN))],
+    },
+    recoverOneBase: {
+      decorators: [UseGuards(AccessRole(USER_ROLE.ADMIN))],
     },
   },
   params: {
     id: {
       field: 'id',
       type: 'number',
-      primary: true,
-    },
-    key: {
-      field: 'key',
-      type: 'string',
       primary: true,
     },
   },
