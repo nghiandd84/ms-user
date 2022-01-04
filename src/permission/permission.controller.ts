@@ -4,7 +4,7 @@ import { PermissionService } from './permission.service';
 import { Permission } from './permission.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreatePermissionDto, UpdatePermissionDto } from './permission.dto';
-import { User, Access, AccessGuard } from 'dn-api-core';
+import { User, AccessGuard } from 'dn-api-core';
 
 @ApiTags('permissions')
 @CrudAuth({
@@ -32,6 +32,11 @@ import { User, Access, AccessGuard } from 'dn-api-core';
     id: {
       field: 'id',
       type: 'number',
+      primary: true,
+    },
+    key: {
+      field: 'key',
+      type: 'string',
       primary: true,
     },
   },

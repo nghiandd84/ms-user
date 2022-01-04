@@ -1,11 +1,9 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 
 import { UserEntity } from './users.entity';
 import { User } from './users.dto';
-import { Login } from 'dn-api-core';
 import { comparePasswords } from './user.helper';
 
 @Injectable()
@@ -17,7 +15,6 @@ export class UsersService extends TypeOrmCrudService<UserEntity> {
   private readonly logger = new Logger(UsersService.name);
 
 
-  
   // Create User
   create(data: User) {
     this.logger.debug('Create new user')
@@ -48,45 +45,9 @@ export class UsersService extends TypeOrmCrudService<UserEntity> {
     });
   }
 
-  /*
-  read(id: number) {
-    return this.repo.findOne({ where: { id: id } }).then((data) => {
-      if (data) {
-        return Promise.resolve(data);
-      }
-      return Promise.reject(
-        new HttpException('Not found', HttpStatus.BAD_REQUEST),
-      );
-    });
-  }
-
-  update(id: number, data: Partial<User>) {
-    return this.repo.update({ id }, data).then((result) => {
-      if (result.affected === 1) {
-        return this.repo
-          .findOne({ id })
-          .then((userEntity) => Promise.resolve(toUserDto(userEntity)));
-      }
-      return Promise.reject(
-        new HttpException('Not found', HttpStatus.BAD_REQUEST),
-      );
-    });
-  }
-
-  destroy(id: number) {
-    return this.repo.delete({ id }).then((data) => {
-      if (data.affected === 1) {
-        return Promise.resolve(true);
-      }
-      return Promise.reject(
-        new HttpException('Not found', HttpStatus.BAD_REQUEST),
-      );
-    });
-  }
-  */
-
+  
   async findByLogin(email: string, password: string): Promise<User> {
-    this.logger.debug('find by email')
+    this.logger.debug('find by email and password')
     const user = await this.repo.findOne({
       where: { email },
       select: ['id', 'email', 'password'],
