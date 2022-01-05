@@ -1,11 +1,11 @@
-import { Controller, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { Crud, CrudAuth } from '@nestjsx/crud';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { User, AccessRole } from 'dn-api-core';
-import { USER_PERMISSION, USER_ROLE } from 'dn-core';
+import { User, AccessRole, AccessPermission } from 'dn-api-core';
+import { USER_ROLE, USER_PERMISSION } from 'dn-core';
 
 import { UsersService } from './users.service';
-import { CreateUser, UpdateUser } from './users.dto';
+import { AssignRole, CreateUser, UpdateUser } from './users.dto';
 
 @ApiTags('users')
 @CrudAuth({
@@ -60,4 +60,10 @@ import { CreateUser, UpdateUser } from './users.dto';
 @ApiBearerAuth()
 export class UsersController {
   constructor(private readonly service: UsersService) {}
+
+  @Post('assign_role')
+  @UseGuards(AccessRole(USER_ROLE.ADMIN), AccessPermission(USER_PERMISSION.ASSIGN_ROLE))
+  assignRole(@Body() assignRole: AssignRole): any {
+    return assignRole;
+  }
 }

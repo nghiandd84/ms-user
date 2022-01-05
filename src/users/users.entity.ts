@@ -17,7 +17,7 @@ import {
 
 import * as bcrypt from 'bcrypt';
 import { ApiProperty } from '@nestjs/swagger';
-import { RoleEntity } from '../role/entities/role.entity';
+import { RoleEntity } from '../role/role.entity';
 
 @Entity('users')
 export class UserEntity extends BaseEntity {

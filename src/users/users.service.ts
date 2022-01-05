@@ -7,7 +7,6 @@ import { User } from './users.dto';
 import { comparePasswords } from './user.helper';
 
 @Injectable()
-@Injectable()
 export class UsersService extends TypeOrmCrudService<UserEntity> {
   constructor(@InjectRepository(UserEntity) repo) {
     super(repo);

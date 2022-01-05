@@ -10,9 +10,9 @@ export class Permission extends BaseEntity {
   @ApiProperty()
   @Column({ name: 'name' })
   name: string;
-  
+
   @ApiProperty()
-  @Column({ name: 'key' })
+  @Column({ name: 'key', type: 'varchar', unique: true })
   key: string;
 
   @ApiProperty()
