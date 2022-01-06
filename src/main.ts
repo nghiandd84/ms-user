@@ -12,7 +12,7 @@ const ENVIRONMENT = process.env.MS_APP_ENVIRONTMENT || 'LOCAL';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: ['error', 'warn', 'log'],
+    logger: ['error', 'warn', 'log', 'debug'],
   });
   app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalPipes(new ValidationPipe());

@@ -55,7 +55,7 @@ export class RoleService extends TypeOrmCrudService<RoleEntity> {
       })
       .then((_) => {
         this.logger.log(
-          `Permission ${assignRole.permissionKey} was assign to role ${assignRole.roleKey}`,
+          `Permission ${assignRole.permissionKey} was ${isUnAssign? 'un-assign' : 'assign'} to role ${assignRole.roleKey} success`,
         );
         return Promise.resolve(true);
       })

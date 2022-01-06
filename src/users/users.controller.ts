@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller,Post, UseGuards } from '@nestjs/common';
 import { Crud, CrudAuth } from '@nestjsx/crud';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User, AccessRole, AccessPermission } from 'dn-api-core';
@@ -6,6 +6,7 @@ import { USER_ROLE, USER_PERMISSION } from 'dn-core';
 
 import { UsersService } from './users.service';
 import { AssignRole, CreateUser, UpdateUser } from './users.dto';
+import { AssignRoleGuard } from './guard';
 
 @ApiTags('users')
 @CrudAuth({
@@ -15,6 +16,7 @@ import { AssignRole, CreateUser, UpdateUser } from './users.dto';
   model: {
     type: User,
   },
+
   query: {
     join: {
       accesses: {
@@ -62,8 +64,20 @@ export class UsersController {
   constructor(private readonly service: UsersService) {}
 
   @Post('assign_role')
-  @UseGuards(AccessRole(USER_ROLE.ADMIN), AccessPermission(USER_PERMISSION.ASSIGN_ROLE))
-  assignRole(@Body() assignRole: AssignRole): any {
-    return assignRole;
+  @UseGuards(
+    AccessPermission(USER_PERMISSION.ASSIGN_ROLE),
+    AssignRoleGuard(USER_PERMISSION.ASSIGN_ROLE),
+  )
+  assignRole(@Body() assignRole: AssignRole): Promise<boolean> {
+    return this.service.assignRole(assignRole);
+  }
+
+  @Post('un_assign_role')
+  @UseGuards(
+    AccessPermission(USER_PERMISSION.UN_ASSIGN_ROLE),
+    AssignRoleGuard(USER_PERMISSION.UN_ASSIGN_ROLE),
+  )
+  unAssignRole(@Body() assignRole: AssignRole): Promise<boolean> {
+    return this.service.assignRole(assignRole, true);
   }
 }

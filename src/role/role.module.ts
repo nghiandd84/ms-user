@@ -7,8 +7,13 @@ import { AuthModule } from 'dn-api-core';
 import { PermissionModule } from '../permission/permission.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([RoleEntity]), AuthModule, PermissionModule],
+  imports: [
+    TypeOrmModule.forFeature([RoleEntity]),
+    AuthModule,
+    PermissionModule,
+  ],
   controllers: [RoleController],
   providers: [RoleService],
+  exports: [RoleService],
 })
 export class RoleModule {}

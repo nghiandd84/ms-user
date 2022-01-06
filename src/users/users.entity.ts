@@ -7,12 +7,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BaseEntity,
-  Generated,
   OneToMany,
   ManyToOne,
-  OneToOne,
-  AfterLoad,
   JoinColumn,
+  RelationId,
+  DeleteDateColumn,
 } from 'typeorm';
 
 import * as bcrypt from 'bcrypt';
@@ -45,6 +44,9 @@ export class UserEntity extends BaseEntity {
   @UpdateDateColumn({ name: 'update_time' })
   updatedAt: Date;
 
+  @DeleteDateColumn({ name: 'delete_time' })
+  deletedAt: Date;
+
   @ApiProperty({ default: 'Abc@123456' })
   @Column({ name: 'password', select: false })
   password: string;
@@ -61,7 +63,10 @@ export class UserEntity extends BaseEntity {
     }
   }
 
-  @OneToMany((_) => AccessEntity, (access) => access.user, { eager: true })
+  @OneToMany((_) => AccessEntity, (access) => access.user, {
+    eager: true,
+    cascade: true,
+  })
   accesses: AccessEntity[];
 }
 
@@ -74,10 +79,11 @@ export class AccessEntity extends BaseEntity {
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: UserEntity;
 
-  @ManyToOne((_) => RoleEntity, { eager: true })
-  @JoinColumn({ name: 'rule_id', referencedColumnName: 'id' })
+  @ManyToOne((_) => RoleEntity, { eager: true, cascade: true })
+  @JoinColumn({ name: 'rule_id', referencedColumnName: 'key' })
   role: RoleEntity;
 
+  @RelationId((access: AccessEntity) => access.role)
   roleKey: string;
 
   @Column({ name: 'location_id', type: 'varchar', nullable: true })
@@ -85,9 +91,4 @@ export class AccessEntity extends BaseEntity {
 
   @Column({ name: 'app_id', type: 'varchar', nullable: true })
   appId: string;
-
-  @AfterLoad()
-  loadKey() {
-    this.roleKey = this.role?.key || null;
-  }
 }
