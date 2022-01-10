@@ -15,11 +15,11 @@ export class RoleEntity extends BaseEntity {
   @ApiProperty({ required: false, readOnly: true })
   id: number;
 
-  @Column({ name: 'key', type: 'varchar', unique: true })
+  @Column({ name: 'role_key', type: 'varchar', unique: true })
   @ApiProperty({ default: 'ROLE_ID' })
   key: string;
 
-  @Column({ name: 'name', type: 'varchar', nullable: true })
+  @Column({ name: 'role_name', type: 'varchar', nullable: true })
   @ApiProperty({ default: 'Role Name' })
   name: string;
 

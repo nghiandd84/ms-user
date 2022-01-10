@@ -8,11 +8,11 @@ export class Permission extends BaseEntity {
   id: number;
 
   @ApiProperty()
-  @Column({ name: 'name' })
+  @Column({ name: 'permission_name' })
   name: string;
 
   @ApiProperty()
-  @Column({ name: 'key', type: 'varchar', unique: true })
+  @Column({ name: 'permission_key', type: 'varchar', unique: true })
   key: string;
 
   @ApiProperty()

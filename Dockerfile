@@ -1,5 +1,5 @@
 # Build docker
-# docker build . -t ms-user --no-cache
+# docker build . -t dn-ms-user --no-cache
 FROM node:16-alpine
 RUN  apk add git curl
 
