@@ -1,13 +1,14 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { APP_PORT } from 'dn-core'
 import { AtGuard } from 'dn-api-core';
 import { AppModule } from './app.module';
 import { TransformInterceptor } from './transform.interceptor';
 
 declare const module: any;
 
-const PORT = process.env.PORT || 8300;
+const PORT = process.env.PORT || APP_PORT.USER;
 const ENVIRONMENT = process.env.MS_APP_ENVIRONTMENT || 'LOCAL';
 
 async function bootstrap() {
