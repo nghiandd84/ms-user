@@ -7,9 +7,9 @@ import {
   AuthService,
   Public,
   AmqpConnection,
+  RABBIT_EXCHANGE_TYPE
 } from 'dn-api-core';
 import { APP_ID } from 'dn-core';
-import { RABBIT_EXCHANGE_TYPE } from 'dn-api-core';
 import { UsersService } from '../users/users.service';
 
 @ApiTags('auth')
@@ -25,9 +25,7 @@ export class AuthController {
   @Public()
   @Post('login')
   public login(@Body() loginUserDto: Login): Promise<LoginStatus> {
-    this.amqpConnection.publish(`${APP_ID.USER}.${RABBIT_EXCHANGE_TYPE.TOPIC}`, 'user-login', {
-      user: loginUserDto,
-    });
+    this.amqpConnection.publish(`${APP_ID.USER}.${RABBIT_EXCHANGE_TYPE.TOPIC}`, 'user-login', loginUserDto);
     return this.authService.login(loginUserDto, this.userService);
   }
 

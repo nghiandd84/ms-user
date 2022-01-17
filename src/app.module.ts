@@ -2,8 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
+  AtGuard,
   DB_CONFIG,
-  RabbitMQModule as RabbitMQModule,
+  RabbitMQModule,
   RABBITMQ_CONFIG,
 } from 'dn-api-core';
 import { APP_ID } from 'dn-core';
@@ -18,8 +19,7 @@ import { Permission } from './permission/permission.entity';
 import { RoleEntity } from './role/role.entity';
 import { RoleModule } from './role/role.module';
 import migrations from './migrations';
-
-import { RabbitMQModule as RabbitMQModule1 } from '@golevelup/nestjs-rabbitmq';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -37,7 +37,7 @@ import { RabbitMQModule as RabbitMQModule1 } from '@golevelup/nestjs-rabbitmq';
         database: process.env.DB_NAME || 'ms_user',
         entities: [UserEntity, Permission, AccessEntity, RoleEntity],
         // synchronize: true, // REMOVE on PROD, only run when develop
-        // logging: true,
+        logging: true,
         migrationsTableName: 'app_migration',
         migrations: migrations,
         migrationsRun: true,
@@ -47,47 +47,15 @@ import { RabbitMQModule as RabbitMQModule1 } from '@golevelup/nestjs-rabbitmq';
     AuthControllerModule,
     PermissionModule,
     RoleModule,
-
-    RabbitMQModule.forRoot(RabbitMQModule, {
-      exchanges: [
-        {
-          name: APP_ID.USER,
-          type: 'topic',
-        },
-        {
-          name: APP_ID.USER,
-          type: 'direct',
-        },
-      ],
-      uri: process.env.RABBITMQ_URL || RABBITMQ_CONFIG.RABBITMQ_URL,
-      connectionInitOptions: { wait: false },
-    }),
-    /*
-    RabbitMQModule.forRootAsync(RabbitMQModule, {
-      useFactory: () => ({
-      exchanges: [
-        {
-          name: APP_ID.USER,
-          type: 'topic',
-        },
-      ],
-      uri: process.env.RABBITMQ_URL || RABBITMQ_CONFIG.RABBITMQ_URL,
-      connectionInitOptions: { wait: false },
-       // channels: {
-      //   'channel-1': {
-      //     prefetchCount: 15,
-      //     default: true,
-      //   },
-      //   'channel-2': {
-      //     prefetchCount: 2,
-      //   },
-      // },
-    })
-  }),
-  */
     AppModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AtGuard,
+    },
+  ],
 })
 export class AppModule {}

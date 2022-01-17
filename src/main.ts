@@ -1,8 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { APP_PORT } from 'dn-core'
-import { AtGuard } from 'dn-api-core';
+import { APP_PORT } from 'dn-core';
 import { AppModule } from './app.module';
 import { TransformInterceptor } from './transform.interceptor';
 
@@ -18,9 +17,6 @@ async function bootstrap() {
   app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalPipes(new ValidationPipe());
 
-  const reflector = new Reflector();
-  const atGuard: any = new AtGuard(reflector);
-  app.useGlobalGuards(atGuard);
   const documentBuilder = new DocumentBuilder()
     .setTitle('User app')
     .setDescription('User app description')
