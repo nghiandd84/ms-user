@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { Logger, otelSDK } from 'dn-api-core';
 import { APP_PORT } from 'dn-core';
 import { AppModule } from './app.module';
 import { TransformInterceptor } from './transform.interceptor';
@@ -11,11 +12,20 @@ const PORT = process.env.PORT || APP_PORT.USER;
 const ENVIRONMENT = process.env.MS_APP_ENVIRONTMENT || 'LOCAL';
 
 async function bootstrap() {
+  await otelSDK.start();
+
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'debug'],
+    bufferLogs: true,
   });
+  
   app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalPipes(new ValidationPipe());
+
+  app.useLogger(app.get(Logger));
+
+  app.enableShutdownHooks();
+  app.enableCors({ origin: '*' });
 
   const documentBuilder = new DocumentBuilder()
     .setTitle('User app')
@@ -33,7 +43,9 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(PORT);
+  app.listen(PORT).then(() => {
+    console.log(`App listen on PORT = ${PORT}`);
+  });
 
   if (module.hot) {
     module.hot.accept();

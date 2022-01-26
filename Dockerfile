@@ -1,8 +1,8 @@
 # Build docker
 # docker build . -t dn-ms-user --no-cache
-FROM node:16-alpine
-RUN  apk add git curl
+FROM dn-ms-base
 
+ENV APP_ENVIRONTMENT=PROD
 ENV AUTH_REDIS_URL=redis://localhost:6379
 ENV REDIS_TTL=86400
 ENV JWT_SECRET=DN-MS-APP-!@#=-0

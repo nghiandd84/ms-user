@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   AtGuard,
   DB_CONFIG,
-  RabbitMQModule,
-  RABBITMQ_CONFIG,
+  OpenTelemetryModule,
+  LoggerModule,
 } from 'dn-api-core';
-import { APP_ID } from 'dn-core';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -19,14 +18,22 @@ import { Permission } from './permission/permission.entity';
 import { RoleEntity } from './role/role.entity';
 import { RoleModule } from './role/role.module';
 import migrations from './migrations';
-import { APP_GUARD } from '@nestjs/core';
+
+
+const OpenTelemetryModuleConfig = OpenTelemetryModule.forRoot({
+  metrics: {
+    hostMetrics: true,
+    defaultMetrics: true,
+    apiMetrics: {
+      enable: true,
+    },
+  },
+});
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: './env/local.env',
-      cache: true,
-    }),
+    LoggerModule,
+    OpenTelemetryModuleConfig,
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
         type: 'mysql',
